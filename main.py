@@ -12,6 +12,13 @@ import torch.optim as optim
 
 REBUILD_DATA = False
 
+if torch.cuda.is_available():
+    device = torch.device("cuda:0")
+    print("Running on GPU")
+else:
+    device = torch.device("cpu")
+    print("Running on CPU")
+
 class DogsVSCats():
     IMG_SIZE = 50
     CATS = "data/Cat"
@@ -112,14 +119,8 @@ if REBUILD_DATA:
     dogsvcats = DogsVSCats()
     dogsvcats.make_training_data()
 
+print("Loading data")
 training_data = np.load("training_data.npy", allow_pickle=True)
-
-if torch.cuda.is_available():
-    device = torch.device("cuda:0")
-    print("Running on GPU")
-else:
-    device = torch.device("cpu")
-    print("Running on CPU")
 
 net = Net().to(device)
 
@@ -139,3 +140,6 @@ test_y = y[-val_size:]
 
 BATCH_SIZE = 100
 EPOCHS = 1
+
+train(net)
+test(net)
